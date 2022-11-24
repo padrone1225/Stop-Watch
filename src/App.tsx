@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import "./App.css";
 
 function App() {
-  const [title, setTitle] = useState(true);
+  const [titleType, setTitleType] = useState(true);
   const [timer, setTimer] = useState(300);
   const [watch, setWatch] = useState(0);
   const [timerState, setTimerState] = useState(false);
@@ -11,17 +11,19 @@ function App() {
   const [watchIntervalId, setWatchIntervalId] = useState(0);
 
   const setClean = () => {
-    if (timerIntervalId !== 0) clearInterval(timerIntervalId);
-    if (watchIntervalId !== 0) clearInterval(watchIntervalId);
-    if (title) {
+    if (titleType) {
       setTimer(300);
+      clearInterval(timerIntervalId);
+      setTimerState(false);
     } else {
       setWatch(0);
+      clearInterval(watchIntervalId);
+      setWatchState(false);
     }
   };
 
   const handleClick = () => {
-    if (title) {
+    if (titleType) {
       setTimerState(!timerState);
     } else {
       setWatchState(!watchState);
@@ -29,7 +31,7 @@ function App() {
   };
 
   useEffect(() => {
-    if (title && timerState) {
+    if (titleType && timerState) {
       let T: any = setInterval(() => {
         setTimer((prev) => {
           if (prev !== 0) return prev - 1;
@@ -39,11 +41,11 @@ function App() {
       setTimerIntervalId(T);
 
       return () => clearInterval(T);
-    } else if (title && !timerState) {
+    } else if (titleType && !timerState) {
       clearInterval(timerIntervalId);
     }
 
-    if (!title && watchState) {
+    if (!titleType && watchState) {
       let T: any = setInterval(() => {
         setWatch((prev) => {
           return prev + 1;
@@ -52,23 +54,23 @@ function App() {
       setWatchIntervalId(T);
 
       return () => clearInterval(T);
-    } else if (!title && !watchState) {
+    } else if (!titleType && !watchState) {
       clearInterval(watchIntervalId);
     }
-  }, [timerState, title, watchState]);
+  }, [timerState, titleType, watchState]);
 
   return (
     <div className="bg-slate-300 relative h-screen">
       <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 h-[200px] w-[400px] border-slate-700 border-2 rounded-xl">
         <div className="flex" id="header">
-          {title ? (
+          {titleType ? (
             <>
               <div className="cursor-pointer w-1/2 px-10 py-5 uppercase text-center rounded-[12px_0_0_0] border-b-2 border-green-600">
                 timer
               </div>
               <div
                 className="cursor-pointer px-10 py-5 hover:bg-slate-400 w-1/2 text-center rounded-[0_12px_0_0]"
-                onClick={() => setTitle(false)}
+                onClick={() => setTitleType(false)}
               >
                 STOPWATCH
               </div>
@@ -77,7 +79,7 @@ function App() {
             <>
               <div
                 className="cursor-pointer px-10 py-5 hover:bg-slate-400 w-1/2 text-center rounded-[12px_0_0_0]"
-                onClick={() => setTitle(true)}
+                onClick={() => setTitleType(true)}
               >
                 TIMER
               </div>
@@ -87,7 +89,7 @@ function App() {
             </>
           )}
         </div>
-        {title ? (
+        {titleType ? (
           <div className="flex gap-2 my-5 mx-auto pl-5 items-end justify-center">
             <div id="min" className="text-xl">
               {Math.floor(timer / 60)} m
